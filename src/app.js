@@ -7,6 +7,7 @@ const authRoutes = require('./routes/auth.routes');
 const studentRoutes = require('./routes/student.routes');
 const courseRoutes = require('./routes/course.routes');
 const attendanceRoutes = require('./routes/attendance.routes');
+const resultRoutes = require('./routes/result.routes');
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/students', studentRoutes);
 app.use('/api/v1/courses', courseRoutes);
 app.use('/api/v1/attendance', attendanceRoutes);
+app.use('/api/v1/results', resultRoutes);
 
 // Global Error Handling Middleware
 // Optimized for high-concurrency: minimal logging to prevent event loop blocking. 
