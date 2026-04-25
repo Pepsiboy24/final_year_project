@@ -18,7 +18,6 @@ const createTables = async () => {
       level INTEGER NOT NULL,
       department VARCHAR(255) NOT NULL,
       cumulative_gpa NUMERIC(3, 2) DEFAULT 0.00,
-      is_at_risk BOOLEAN DEFAULT false,
       created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );
 
