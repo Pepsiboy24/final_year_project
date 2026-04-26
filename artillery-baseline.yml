@@ -1,0 +1,23 @@
+config:
+  target: "http://localhost:3000"
+  phases:
+    - duration: 300 # 5 minutes
+      arrivalRate: 5 # Start with 5 new students per second
+      rampTo: 80     # Build up to 80 new students per second (totaling ~400 concurrent)
+      name: "Ramping up load for AFIT Thesis Baseline"
+  defaults:
+    headers:
+      Content-Type: "application/json"
+
+scenarios:
+  - name: "Result Checking Peak Period"
+    flow:
+      - post:
+          url: "/api/v1/auth/login"
+          json:
+            email: "student@afit.edu.ng"
+            password: "password123"
+      - get:
+          url: "/api/v1/students"
+      - get:
+          url: "/api/v1/results/student/1" # Testing the GPA computation logic
