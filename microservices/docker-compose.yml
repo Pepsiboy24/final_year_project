@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  # --- Databases ---
+  auth-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: auth_user
+      POSTGRES_PASSWORD: auth_password
+      POSTGRES_DB: auth_db
+    ports:
+      - "5435:5432"
+    volumes:
+      - ./db-init/auth-init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  student-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: student_user
+      POSTGRES_PASSWORD: student_password
+      POSTGRES_DB: student_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./db-init/student-init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  result-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: result_user
+      POSTGRES_PASSWORD: result_password
+      POSTGRES_DB: result_db
+    ports:
+      - "5434:5432"
+    volumes:
+      - ./db-init/result-init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  # --- Application Services ---
+  auth-service:
+    build:
+      context: ./auth-service
+    ports:
+      - "3001:3000"
+    environment:
+      - DATABASE_URL=postgres://auth_user:auth_password@auth-db:5432/auth_db
+      - JWT_SECRET=supersecretjwtkey123
+    depends_on:
+      - auth-db
+
+  student-service:
+    build:
+      context: ./student-service
+    ports:
+      - "3002:3000"
+    environment:
+      - DATABASE_URL=postgres://student_user:student_password@student-db:5432/student_db
+      - JWT_SECRET=supersecretjwtkey123
+    depends_on:
+      - student-db
+
+  result-service:
+    build:
+      context: ./result-service
+    ports:
+      - "3003:3000"
+    environment:
+      - DATABASE_URL=postgres://result_user:result_password@result-db:5432/result_db
+      - JWT_SECRET=supersecretjwtkey123
+      - STUDENT_SERVICE_URL=http://student-service:3000
+    depends_on:
+      - result-db
